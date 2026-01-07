@@ -2,8 +2,24 @@ import { useMemo } from 'react'
 import { useHeroes } from '@/hooks/useHeroes'
 import type { Role, HeroElement } from '@/lib/types'
 
-function HeroesList() {
+interface HeroesListProps {
+  searchQuery: string
+}
+
+function HeroesList({ searchQuery }: HeroesListProps) {
   const { data: heroes, isLoading, error } = useHeroes()
+
+  // Filtra gli eroi in base alla query di ricerca
+  const filteredHeroes = useMemo(() => {
+    if (!heroes) return []
+    if (!searchQuery.trim()) return heroes
+    
+    const query = searchQuery.toLowerCase().trim()
+    return heroes.filter((hero) => 
+      hero.name.toLowerCase().includes(query) ||
+      hero.real_name.toLowerCase().includes(query)
+    )
+  }, [heroes, searchQuery])
 
   // Raggruppa gli eroi per ruolo
   const heroesByRole = useMemo<Record<Role, HeroElement[]>>(() => {
@@ -13,14 +29,14 @@ function HeroesList() {
       Vanguard: [],
     }
     
-    if (heroes) {
-      heroes.forEach((hero) => {
+    if (filteredHeroes) {
+      filteredHeroes.forEach((hero) => {
         grouped[hero.role].push(hero)
       })
     }
     
     return grouped
-  }, [heroes])
+  }, [filteredHeroes])
 
   if (isLoading) {
     return (
@@ -44,6 +60,16 @@ function HeroesList() {
     return (
       <div className="flex justify-center items-center py-8">
         <div className="text-lg text-gray-600 dark:text-gray-400">Nessun eroe trovato</div>
+      </div>
+    )
+  }
+
+  if (searchQuery.trim() && filteredHeroes.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-lg text-gray-600 dark:text-gray-400">
+          Nessun eroe trovato per "{searchQuery}"
+        </div>
       </div>
     )
   }
