@@ -33,3 +33,4 @@ function SearchInput({ value, onChange, placeholder = 'Cerca eroi...' }: SearchI
 
 export default SearchInput
 
+

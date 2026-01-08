@@ -106,7 +106,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
               {roleHeroes.map((hero) => (
                 <div
                   key={hero.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden w-full h-[450px] flex items-center justify-center"
+                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden w-full h-[450px] flex items-center justify-center cursor-pointer"
                 >
                   <img
                     src={getImageUrl(hero)}
