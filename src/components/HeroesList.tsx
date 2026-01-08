@@ -6,6 +6,37 @@ interface HeroesListProps {
   searchQuery: string
 }
 
+interface HeroCardProps {
+  hero: HeroElement
+  getImageUrl: (hero: HeroElement) => string
+}
+
+function HeroCard({ hero, getImageUrl }: HeroCardProps) {
+  return (
+    <div
+      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden hover:overflow-visible w-full h-[450px] flex items-center justify-center cursor-pointer relative group"
+    >
+      {/* Container per immagine originale - completamente statico e sempre contenuto */}
+      <div className="w-full h-full flex items-center justify-center z-10 overflow-hidden">
+        <img
+          src={getImageUrl(hero)}
+          alt={hero.name}
+          className="w-full h-full object-contain scale-125 md:scale-135 lg:scale-140 xl:scale-135 2xl:scale-130"
+        />
+      </div>
+      {/* Duplicato a colori - solo parte superiore sovrapposta, visibile solo al hover e può uscire dalla card */}
+      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <img
+          src={getImageUrl(hero)}
+          alt=""
+          className="w-full h-full object-contain scale-125 md:scale-135 lg:scale-140 xl:scale-135 2xl:scale-130"
+          style={{ clipPath: 'inset(0 0 50% 0)' }}
+        />
+      </div>
+    </div>
+  )
+}
+
 function HeroesList({ searchQuery }: HeroesListProps) {
   const { data: heroes, isLoading, error } = useHeroes()
 
@@ -104,16 +135,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 px-4 w-full">
               {roleHeroes.map((hero) => (
-                <div
-                  key={hero.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden w-full h-[450px] flex items-center justify-center cursor-pointer"
-                >
-                  <img
-                    src={getImageUrl(hero)}
-                    alt={hero.name}
-                    className="w-full h-full object-contain scale-125 md:scale-135 lg:scale-140 xl:scale-135 2xl:scale-130"
-                  />
-                </div>
+                <HeroCard key={hero.id} hero={hero} getImageUrl={getImageUrl} />
               ))}
             </div>
           </div>
