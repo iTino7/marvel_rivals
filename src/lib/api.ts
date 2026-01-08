@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { z } from 'zod'
-import { HeroElementSchema, type HeroElement } from './types'
+import { HeroElementSchema, type HeroElement, MapsSchema, type Maps } from './types'
 
 const API_BASE_URL = 'https://marvelrivalsapi.com/api/v1'
 
@@ -33,7 +33,24 @@ export const getHeroes = async (): Promise<HeroElement[]> => {
   }
 }
 
+// Schema per validare la risposta delle mappe
+export const getMaps = async (): Promise<Maps> => {
+  const response = await apiClient.get<unknown>('/maps')
+  
+  // Valida i dati con Zod
+  try {
+    const mapsData = MapsSchema.parse(response.data)
+    return mapsData
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error('Errore di validazione Zod:', error.issues)
+      throw new Error(`Dati non validi dall'API: ${error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`)
+    }
+    throw error
+  }
+}
+
 // Esporta gli schemi per uso esterno se necessario
-export { HeroElementSchema } from './types'
+export { HeroElementSchema, MapSchema, MapsSchema } from './types'
 export { HeroesArraySchema }
 

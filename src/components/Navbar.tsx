@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 import SearchInput from './SearchInput'
 
@@ -11,7 +12,9 @@ function Navbar({ searchValue, onSearchChange }: NavbarProps) {
     <nav className="bg-white dark:bg-black relative">
       <div className="flex justify-center md:justify-between items-center h-16 px-4 sm:px-6 lg:px-8 gap-4">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Marvel Rivals</h1>
+          <Link to="/" className="text-xl font-bold text-gray-900 dark:text-white hover:opacity-80 transition-opacity">
+            Marvel Rivals
+          </Link>
         </div>
         <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-full max-w-md px-4">
           <SearchInput value={searchValue} onChange={onSearchChange} />

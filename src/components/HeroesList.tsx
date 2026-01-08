@@ -14,7 +14,27 @@ interface HeroCardProps {
 function HeroCard({ hero, getImageUrl }: HeroCardProps) {
   return (
     <div
-      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden hover:overflow-visible w-full h-[450px] flex items-center justify-center cursor-pointer relative group"
+      className="bg-white rounded-lg shadow-lg hover:shadow-2xl overflow-hidden hover:overflow-visible w-full h-[450px] flex items-center justify-center cursor-pointer relative group border border-gray-200 dark:border-0"
+      style={{
+        perspective: '1000px',
+        transformStyle: 'preserve-3d',
+        transition: 'transform 0.1s ease-out, box-shadow 0.3s ease-out'
+      }}
+      onMouseMove={(e) => {
+        const card = e.currentTarget
+        const rect = card.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        const centerX = rect.width / 2
+        const centerY = rect.height / 2
+        const rotateX = (y - centerY) / 30
+        const rotateY = (centerX - x) / 30
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)'
+      }}
     >
       {/* Container per immagine originale - completamente statico e sempre contenuto */}
       <div className="w-full h-full flex items-center justify-center z-10 overflow-hidden">
@@ -30,7 +50,9 @@ function HeroCard({ hero, getImageUrl }: HeroCardProps) {
           src={getImageUrl(hero)}
           alt=""
           className="w-full h-full object-contain scale-125 md:scale-135 lg:scale-140 xl:scale-135 2xl:scale-130"
-          style={{ clipPath: 'inset(0 0 50% 0)' }}
+          style={{ 
+            clipPath: 'inset(0 0 85% 0)'
+          }}
         />
       </div>
     </div>
