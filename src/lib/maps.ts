@@ -49,6 +49,10 @@ export const getMapVideoUrl = (map: Map): string | null => {
   if (map.video.startsWith('http://') || map.video.startsWith('https://')) {
     return map.video
   }
+  // Se il video inizia con /, usa direttamente il percorso
+  if (map.video.startsWith('/')) {
+    return `https://marvelrivalsapi.com${map.video}`
+  }
   return `https://marvelrivalsapi.com/rivals/${map.video}`
 }
 
