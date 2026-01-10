@@ -195,7 +195,7 @@ function Lore() {
       </div>
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-        <Link to="/heroes" className="block opacity-100!" style={{ opacity: 1 }}>
+        <Link to={`/hero/${encodeURIComponent(randomHero.name)}`} className="block opacity-100!" style={{ opacity: 1 }}>
           <Button className="text-xl md:text-2xl ">Vai ai dettagli</Button>
         </Link>
       </div>
