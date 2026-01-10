@@ -37,6 +37,11 @@ function SingleHero() {
   }
 
   const imageUrl = getImageUrl(hero)
+  
+  // Prepara il testo della lore
+  const loreText = hero.lore?.trim() || hero.bio?.trim() || ''
+  const hasValidLore = loreText && !loreText.toLowerCase().includes('no lore available')
+  const displayLore = hasValidLore ? loreText : (hero.bio || '')
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -94,7 +99,24 @@ function SingleHero() {
             src={imageUrl} 
             alt={hero.name}
             className="max-w-full max-h-[80vh] object-contain"
+            style={{
+              filter: 'drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5)) drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3))'
+            }}
           />
+        )}
+      </div>
+      
+      {/* Nome reale e Lore in basso a sinistra */}
+      <div className="absolute bottom-0 left-0 z-10 p-4 md:p-6 lg:p-8 max-w-lg md:max-w-xl lg:max-w-2xl">
+        {hero.real_name && (
+          <h2 className="text-white text-lg md:text-xl font-bold mb-2 opacity-40 transform -skew-x-12">
+            {hero.real_name}
+          </h2>
+        )}
+        {displayLore && (
+          <p className="text-white text-sm md:text-base leading-relaxed opacity-40">
+            {displayLore}
+          </p>
         )}
       </div>
     </div>
