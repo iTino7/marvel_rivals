@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import CircularText from './CircularText'
 import Lore from './Lore'
 import Arrow from './Arrow'
+import MarvelRivalsTitle from './MarvelRivalsTitle'
 
 function Home() {
   const [arrowClicked, setArrowClicked] = useState(false)
@@ -32,7 +33,7 @@ function Home() {
         <nav className="bg-black relative z-10">
           <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8">
             <div className="flex items-center">
-              <h1 className="text-3xl md:text-4xl font-bold text-white transform -skew-x-12">Marvel Rivals</h1>
+              <MarvelRivalsTitle />
             </div>
           </div>
         </nav>
