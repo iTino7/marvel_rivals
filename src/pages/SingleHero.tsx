@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom'
 import { useHeroes } from '@/hooks/useHeroes'
 import MarvelRivalsTitle from '@/components/MarvelRivalsTitle'
 import HeroCarousel from '@/components/HeroCarousel'
+import Ability from '@/components/Ability'
+import { SingleHeroStrings } from '@/lib/strings'
 import type { HeroElement } from '@/lib/types'
 
 function SingleHero() {
@@ -13,7 +15,7 @@ function SingleHero() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-white text-xl">Caricamento...</div>
+        <div className="text-white text-xl">{SingleHeroStrings.loading}</div>
       </div>
     )
   }
@@ -30,7 +32,7 @@ function SingleHero() {
   if (!hero) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-white text-xl">Personaggio non trovato</div>
+        <div className="text-white text-xl">{SingleHeroStrings.heroNotFound}</div>
       </div>
     )
   }
@@ -88,6 +90,7 @@ function SingleHero() {
   const displayLore = hasValidLore ? loreText : (hero.bio || '')
 
   return (
+    <>
     <div className="min-h-screen relative overflow-hidden">
       {/* Base con gradiente sottile - Colori neutri */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 z-0" />
@@ -190,7 +193,18 @@ function SingleHero() {
           })}
         </div>
       )}
+      
+      {/* Gradiente di transizione morbida alla fine */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-64 z-20 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.3) 60%, rgba(0, 0, 0, 0.5) 100%)'
+        }}
+      />
     </div>
+    {/* Componente Ability */}
+    <Ability hero={hero} />
+    </>
   )
 }
 

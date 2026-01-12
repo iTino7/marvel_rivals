@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useHeroes } from '@/hooks/useHeroes'
+import { HeroesListStrings } from '@/lib/strings'
 import type { Role, HeroElement } from '@/lib/types'
 
 interface HeroesListProps {
@@ -94,7 +95,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-8">
-        <div className="text-lg text-gray-600 dark:text-gray-400">Caricamento eroi...</div>
+        <div className="text-lg text-gray-600 dark:text-gray-400">{HeroesListStrings.loadingHeroes}</div>
       </div>
     )
   }
@@ -103,7 +104,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
     return (
       <div className="flex justify-center items-center py-8">
         <div className="text-lg text-red-600 dark:text-red-400">
-          Errore nel caricamento degli eroi
+          {HeroesListStrings.errorLoadingHeroes}
         </div>
       </div>
     )
@@ -112,7 +113,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
   if (!heroes || heroes.length === 0) {
     return (
       <div className="flex justify-center items-center py-8">
-        <div className="text-lg text-gray-600 dark:text-gray-400">Nessun eroe trovato</div>
+        <div className="text-lg text-gray-600 dark:text-gray-400">{HeroesListStrings.noHeroesFound}</div>
       </div>
     )
   }
@@ -121,7 +122,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
     return (
       <div className="flex justify-center items-center py-8">
         <div className="text-lg text-gray-600 dark:text-gray-400">
-          Nessun eroe trovato per "{searchQuery}"
+          {HeroesListStrings.noHeroesFoundFor(searchQuery)}
         </div>
       </div>
     )

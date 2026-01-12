@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import Button from './Button'
 import { useHeroes } from '@/hooks/useHeroes'
+import { LoreStrings } from '@/lib/strings'
 import type { HeroElement } from '@/lib/types'
 
 function Lore() {
@@ -48,7 +49,7 @@ function Lore() {
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-black min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">Caricamento...</div>
+        <div className="text-white text-xl">{LoreStrings.loading}</div>
       </div>
     )
   }
@@ -56,7 +57,7 @@ function Lore() {
   if (!randomHero) {
     return (
       <div className="fixed inset-0 bg-black min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">Nessun eroe disponibile</div>
+        <div className="text-white text-xl">{LoreStrings.noHeroAvailable}</div>
       </div>
     )
   }
@@ -66,7 +67,7 @@ function Lore() {
   const loreText = randomHero.lore?.trim() || ''
   const bioText = randomHero.bio?.trim() || ''
   const hasValidLore = loreText && !loreText.toLowerCase().includes('no lore available')
-  const displayText = hasValidLore ? loreText : (bioText || 'Nessuna descrizione disponibile')
+  const displayText = hasValidLore ? loreText : (bioText || LoreStrings.noDescriptionAvailable)
 
   // Filtra gli altri eroi escludendo quello corrente
   const otherHeroes = heroes?.filter(hero => hero.id !== randomHero.id) || []
@@ -196,7 +197,7 @@ function Lore() {
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
         <Link to={`/hero/${encodeURIComponent(randomHero.name)}`} className="block opacity-100!" style={{ opacity: 1 }}>
-          <Button className="text-xl md:text-2xl ">Vai ai dettagli</Button>
+          <Button className="text-xl md:text-2xl ">{LoreStrings.goToDetails}</Button>
         </Link>
       </div>
     </div>

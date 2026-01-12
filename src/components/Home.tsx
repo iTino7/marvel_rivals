@@ -4,6 +4,7 @@ import CircularText from './CircularText'
 import Lore from './Lore'
 import Arrow from './Arrow'
 import MarvelRivalsTitle from './MarvelRivalsTitle'
+import { HomeStrings } from '@/lib/strings'
 
 function Home() {
   const [arrowClicked, setArrowClicked] = useState(false)
@@ -40,16 +41,16 @@ function Home() {
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 relative overflow-hidden z-10">
           <div className="text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Benvenuto in Marvel Rivals
+              {HomeStrings.welcome}
             </h2>
             <p className="text-5xl md:text-6xl lg:text-7xl text-white mb-8 font-semibold">
-              Esplora tutti gli eroi <span className="inline-block transform -skew-x-12">Marvel</span>
+              {HomeStrings.exploreHeroes} <span className="inline-block transform -skew-x-12">{HomeStrings.marvel}</span>
             </p>
             <Link
               to="/heroes"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
             >
-              Vedi tutti gli eroi
+              {HomeStrings.seeAllHeroes}
             </Link>
           </div>
           <Arrow 
@@ -58,7 +59,7 @@ function Home() {
           />
           <div className="absolute bottom-8 right-8 pointer-events-none overflow-visible" style={{ willChange: 'transform' }}>
             <CircularText 
-              text="MARVEL*RIVALS*HEROES*" 
+              text={HomeStrings.circularText} 
               className="w-[150px] h-[150px] [&_span]:text-[#fbdb2b]"
               spinDuration={30}
             />

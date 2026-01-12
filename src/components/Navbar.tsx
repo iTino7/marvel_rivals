@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 import SearchInput from './SearchInput'
+import { NavbarStrings } from '@/lib/strings'
 
 interface NavbarProps {
   searchValue: string
@@ -13,7 +14,7 @@ function Navbar({ searchValue, onSearchChange }: NavbarProps) {
       <div className="flex justify-center md:justify-between items-center h-16 px-4 sm:px-6 lg:px-8 gap-4">
         <div className="flex items-center">
           <Link to="/" className="text-xl font-bold text-gray-900 dark:text-white hover:opacity-80 transition-opacity">
-            Marvel Rivals
+            {NavbarStrings.marvelRivals}
           </Link>
         </div>
         <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-full max-w-md px-4">
@@ -29,7 +30,7 @@ function Navbar({ searchValue, onSearchChange }: NavbarProps) {
             }}
             className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
           >
-            Vanguard
+            {NavbarStrings.vanguard}
           </a>
           <a 
             href="#duelist"
@@ -40,7 +41,7 @@ function Navbar({ searchValue, onSearchChange }: NavbarProps) {
             }}
             className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
           >
-            Duelist
+            {NavbarStrings.duelist}
           </a>
           <a 
             href="#strategist"
@@ -51,7 +52,7 @@ function Navbar({ searchValue, onSearchChange }: NavbarProps) {
             }}
             className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
           >
-            Strategist
+            {NavbarStrings.strategist}
           </a>
           <ThemeToggle />
         </div>

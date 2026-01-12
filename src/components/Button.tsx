@@ -1,10 +1,12 @@
+import { ButtonStrings } from '@/lib/strings'
+
 interface ButtonProps {
   onClick?: () => void
   className?: string
   children?: React.ReactNode
 }
 
-function Button({ onClick, className = '', children = 'clicca qui' }: ButtonProps) {
+function Button({ onClick, className = '', children = ButtonStrings.defaultText }: ButtonProps) {
   return (
     <button
       onClick={onClick}

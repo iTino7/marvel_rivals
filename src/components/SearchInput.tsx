@@ -1,5 +1,6 @@
 import { Search, X } from 'lucide-react'
 import { Input } from './ui/input'
+import { SearchInputStrings } from '@/lib/strings'
 
 interface SearchInputProps {
   value: string
@@ -7,7 +8,7 @@ interface SearchInputProps {
   placeholder?: string
 }
 
-function SearchInput({ value, onChange, placeholder = 'Cerca eroi...' }: SearchInputProps) {
+function SearchInput({ value, onChange, placeholder = SearchInputStrings.placeholder }: SearchInputProps) {
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
@@ -22,7 +23,7 @@ function SearchInput({ value, onChange, placeholder = 'Cerca eroi...' }: SearchI
         <button
           onClick={() => onChange('')}
           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
-          aria-label="Cancella ricerca"
+          aria-label={SearchInputStrings.clearSearch}
         >
           <X className="h-4 w-4" />
         </button>
