@@ -1,5 +1,5 @@
 import { AbilityStrings } from '@/lib/strings'
-import type { HeroElement, Ability as AbilityType } from '@/lib/types'
+import type { HeroElement, Type } from '@/lib/types'
 
 interface AbilityProps {
   hero: HeroElement
@@ -12,6 +12,15 @@ function Ability({ hero }: AbilityProps) {
       return icon
     }
     return `https://marvelrivalsapi.com/rivals/${icon}`
+  }
+
+  // Colori per ogni tipo di abilità
+  const typeColors: Record<Type, string> = {
+    Movement: '#3B82F6', // Blue
+    Normal: '#10B981', // Green
+    Passive: '#F59E0B', // Yellow
+    Ultimate: '#EF4444', // Red
+    Weapon: '#8B5CF6', // Purple
   }
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -70,54 +79,88 @@ function Ability({ hero }: AbilityProps) {
           </h2>
         </div>
         
-        {/* Lista abilità */}
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {hero.abilities.map((ability) => (
-            <div
-              key={ability.id}
-              className="bg-black/40 border-2 border-white/30 rounded-lg p-6 hover:border-yellow-400 transition-all duration-200 transform -skew-x-12"
-            >
-              {/* Icona e nome */}
-              <div className="flex items-center gap-4 mb-4">
-                {ability.icon && (
-                  <img
-                    src={getAbilityIconUrl(ability.icon)}
-                    alt={ability.name || 'Ability icon'}
-                    className="w-16 h-16 object-contain"
-                  />
-                )}
-                <div>
-                  {ability.name && (
-                    <h3 className="text-white text-xl md:text-2xl font-bold mb-1">
-                      {ability.name}
-                    </h3>
-                  )}
-                  <span className="text-yellow-400 text-sm font-semibold">
-                    {ability.type}
-                  </span>
-                </div>
-              </div>
-              
-              {/* Descrizione */}
-              {ability.description && (
-                <p className="text-white text-sm md:text-base leading-relaxed opacity-90">
-                  {ability.description}
-                </p>
-              )}
-              
-              {/* Campi aggiuntivi */}
-              {ability.additional_fields && Object.keys(ability.additional_fields).length > 0 && (
-                <div className="mt-4 pt-4 border-t border-white/20">
-                  {Object.entries(ability.additional_fields).map(([key, value]) => (
-                    <div key={key} className="mb-2">
-                      <span className="text-yellow-400 text-xs font-semibold uppercase">{key}:</span>
-                      <span className="text-white text-sm ml-2">{value}</span>
+        <div className="max-w-7xl mx-auto flex flex-row gap-8 md:gap-12">
+          {/* Lista abilità a sinistra */}
+          <div className="flex-1 flex flex-col gap-4 md:gap-6">
+            {hero.abilities.slice(0, Math.ceil(hero.abilities.length / 2)).map((ability, index) => {
+              const typeColor = typeColors[ability.type]
+              return (
+                <div
+                  key={ability.id}
+                  className="relative group"
+                >
+                  {/* Card semplice con solo icona e testo */}
+                  <div className="flex items-start gap-4 md:gap-6 hover:opacity-90 transition-opacity">
+                    {/* Icona */}
+                    {ability.icon && (
+                      <div className="flex-shrink-0">
+                        <img
+                          src={getAbilityIconUrl(ability.icon)}
+                          alt={ability.name || 'Ability icon'}
+                          className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Testo */}
+                    <div className="flex-1 min-w-0">
+                      {ability.name && (
+                        <h3 className="text-white text-lg md:text-xl font-bold transform -skew-x-12 mb-2 opacity-100">
+                          {ability.name}
+                        </h3>
+                      )}
+                      {ability.description && (
+                        <p className="text-white text-sm md:text-base leading-relaxed opacity-100">
+                          {ability.description}
+                        </p>
+                      )}
                     </div>
-                  ))}
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+              )
+            })}
+          </div>
+          
+          {/* Lista abilità a destra */}
+          <div className="flex-1 flex flex-col gap-4 md:gap-6">
+            {hero.abilities.slice(Math.ceil(hero.abilities.length / 2)).map((ability, index) => {
+              const typeColor = typeColors[ability.type]
+              return (
+                <div
+                  key={ability.id}
+                  className="relative group"
+                >
+                  {/* Card semplice con solo icona e testo */}
+                  <div className="flex items-start gap-4 md:gap-6 hover:opacity-90 transition-opacity">
+                    {/* Icona */}
+                    {ability.icon && (
+                      <div className="flex-shrink-0">
+                        <img
+                          src={getAbilityIconUrl(ability.icon)}
+                          alt={ability.name || 'Ability icon'}
+                          className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Testo */}
+                    <div className="flex-1 min-w-0">
+                      {ability.name && (
+                        <h3 className="text-white text-lg md:text-xl font-bold transform -skew-x-12 mb-2 opacity-100">
+                          {ability.name}
+                        </h3>
+                      )}
+                      {ability.description && (
+                        <p className="text-white text-sm md:text-base leading-relaxed opacity-100">
+                          {ability.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
