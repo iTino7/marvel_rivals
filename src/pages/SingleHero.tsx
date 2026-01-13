@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { ChevronDown } from 'lucide-react'
 import { useHeroes } from '@/hooks/useHeroes'
 import MarvelRivalsTitle from '@/components/MarvelRivalsTitle'
 import HeroCarousel from '@/components/HeroCarousel'
@@ -93,7 +94,20 @@ function SingleHero() {
 
   return (
     <>
-    <div className="min-h-screen relative overflow-hidden" style={{ zIndex: 20 }}>
+    <div 
+      className="min-h-screen relative overflow-hidden animate-[fadeIn_0.5s_ease-in-out]" 
+      style={{ zIndex: 20 }}
+    >
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      `}</style>
       {/* Base con gradiente sottile - Colori neutri */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 z-0" />
       
@@ -203,6 +217,30 @@ function SingleHero() {
           background: 'linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.3) 60%, rgba(0, 0, 0, 0.5) 100%)'
         }}
       />
+      
+      {/* Freccia rimbalzante in basso */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+        <div className="animate-bounce">
+          <ChevronDown className="w-8 h-8 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />
+        </div>
+      </div>
+      
+      {/* CSS per animazione bounce personalizzata */}
+      <style>{`
+        @keyframes bounce {
+          0%, 100% {
+            transform: translateY(0);
+            animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+          }
+          50% {
+            transform: translateY(-25%);
+            animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+          }
+        }
+        .animate-bounce {
+          animation: bounce 2s infinite;
+        }
+      `}</style>
     </div>
     {/* Componente Ability */}
     <Ability hero={hero} />

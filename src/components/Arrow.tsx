@@ -1,3 +1,5 @@
+import { ChevronDown } from 'lucide-react'
+
 interface ArrowProps {
   onClick?: () => void
   animate?: boolean
@@ -7,21 +9,11 @@ interface ArrowProps {
 function Arrow({ onClick, animate = true, className = '' }: ArrowProps) {
   return (
     <div 
-      className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer ${className}`}
+      className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer z-20 ${className}`}
       onClick={onClick}
     >
       <div className={animate ? 'animate-bounce' : ''}>
-        <svg
-          className="w-8 h-8 text-black"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
+        <ChevronDown className="w-8 h-8 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />
       </div>
     </div>
   )

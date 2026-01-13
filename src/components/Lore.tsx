@@ -1,26 +1,46 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import Button from './Button'
+import Transition from './Transition'
 import { useHeroes } from '@/hooks/useHeroes'
 import { LoreStrings } from '@/lib/strings'
 import type { HeroElement } from '@/lib/types'
 
-function Lore() {
+interface LoreProps {
+  heroName?: string | null
+  isBackground?: boolean
+}
+
+function Lore({ heroName, isBackground = false }: LoreProps = {}) {
   const { data: heroes, isLoading } = useHeroes()
   const [randomHero, setRandomHero] = useState<HeroElement | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const navigate = useNavigate()
   const hasSelectedHero = useRef(false)
 
   useEffect(() => {
     if (heroes && heroes.length > 0 && !hasSelectedHero.current) {
       setTimeout(() => {
-        const randomIndex = Math.floor(Math.random() * heroes.length)
-        setRandomHero(heroes[randomIndex])
+        let heroToShow: HeroElement | null = null
+        
+        // Se è specificato un heroName, usa quello, altrimenti scegli random
+        if (heroName) {
+          const decodedName = decodeURIComponent(heroName)
+          heroToShow = heroes.find(h => h.name === decodedName) || null
+        }
+        
+        // Se non trovato o non specificato, scegli random
+        if (!heroToShow) {
+          const randomIndex = Math.floor(Math.random() * heroes.length)
+          heroToShow = heroes[randomIndex]
+        }
+        
+        setRandomHero(heroToShow)
         hasSelectedHero.current = true
       }, 0)
     }
-  }, [heroes])
+  }, [heroes, heroName])
 
   const getImageUrl = (hero: HeroElement) => {
     const costumeIcon = hero.costumes.find(costume => costume.icon !== null)?.icon
@@ -82,8 +102,14 @@ function Lore() {
     }, 300)
   }
 
+  const handleButtonClick = () => {
+    if (randomHero) {
+      navigate(`/hero/${encodeURIComponent(randomHero.name)}`)
+    }
+  }
+
   return (
-    <div className="fixed inset-0 bg-white min-h-screen">
+    <div className="fixed inset-0 bg-gray-100 min-h-screen">
       <div className="absolute inset-0 opacity-10 z-0">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -100,8 +126,13 @@ function Lore() {
         </svg>
       </div>
       
+      {/* Overlay leggermente scuro - solo se non è usato come background */}
+      {!isBackground && (
+        <div className="absolute inset-0 bg-black/20 z-1" />
+      )}
+      
       {costumeImageUrl && (
-        <div className={`absolute inset-0 z-1 transition-opacity duration-300 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-50'}`}>
+        <div className={`absolute inset-0 z-1 transition-opacity duration-300 ease-in-out ${isTransitioning ? 'opacity-0' : isBackground ? 'opacity-20' : 'opacity-40'}`}>
           <img 
             src={costumeImageUrl} 
             alt={randomHero.name}
@@ -111,95 +142,105 @@ function Lore() {
         </div>
       )}
       
-      <div className="absolute top-8 left-8 z-10 flex items-center h-28">
-        <h2 className="text-4xl md:text-5xl font-bold text-black transform skew-x-12">
-          {randomHero.real_name}
-        </h2>
-      </div>
-      
-      <div className="absolute top-8 right-16 z-10">
-        <div className="relative w-24 h-28">
-          {/* Icona originale */}
-          <div className="w-24 h-28 border-2 border-black bg-transparent overflow-hidden" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
-            <img 
-              src={getImageUrl(randomHero)} 
-              alt={randomHero.name}
-              className="w-full h-full object-cover object-center"
-              style={{ 
-                objectPosition: 'center top',
-                transform: 'scale(3.0) rotate(10deg) translateX(5%) translateY(-10%)',
-                transformOrigin: 'top'
-              }}
-            />
-          </div>
-          {/* Icona duplicata sovrapposta tagliata al 50% */}
-          <div className="absolute inset-0 w-24 h-28 bg-transparent overflow-visible" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
-            <img 
-              src={getImageUrl(randomHero)} 
-              alt={randomHero.name}
-              className="w-full h-full object-cover object-center"
-              style={{ 
-                objectPosition: 'center top',
-                transform: 'scale(3.0) rotate(10deg) translateX(5%) translateY(-10%)',
-                transformOrigin: 'top',
-                clipPath: 'inset(0 30% 60% 40%)'
-              }}
-            />
-          </div>
+      {!isBackground && (
+        <div className="absolute top-8 left-8 z-10 flex items-center h-28">
+          <h2 className="text-4xl md:text-5xl font-bold text-black transform skew-x-12">
+            {randomHero.real_name}
+          </h2>
         </div>
-      </div>
+      )}
       
-      <div className={`flex flex-col items-start justify-center min-h-screen px-4 relative z-10 transition-opacity duration-300 ease-in-out ${isTransitioning ? 'opacity-0' : ''}`}>
-        <div className="w-full max-w-[90%] pl-4 md:pl-8 lg:pl-12 transform translate-y-[150%]">
-          <h1 className="text-5xl md:text-6xl font-bold text-black mb-8 transform -skew-x-12 pb-1 border-b border-black w-full">
-            {randomHero.name}
-          </h1>
-          <p className="text-black mt-4 mb-[-10px] text-lg leading-relaxed w-full transform -skew-x-12">
-            {displayText}
-          </p>
-        </div>
-      </div>
-      {/* Icone altri personaggi sotto l'icona principale */}
-      <div className="absolute right-16 top-40 z-10 flex flex-col items-center gap-3">
-        <div 
-          className="flex flex-col items-center gap-3 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden"
-          style={{ 
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-          }}
-        >
-          {otherHeroes.map((hero) => (
-            <div 
-              key={hero.id} 
-              className="w-24 h-28 shrink-0 border-2 border-black bg-transparent overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer"
-              style={{ transform: 'perspective(200px) rotateY(-3deg)' }}
-              onClick={() => handleHeroChange(hero)}
-            >
-              <img 
-                src={getImageUrl(hero)} 
-                alt={hero.name}
-                className="w-full h-full object-cover object-center"
-                style={{ 
-                  objectPosition: 'center top',
-                  transform: 'scale(3.0) rotate(10deg) translateX(5%) translateY(-10%)',
-                  transformOrigin: 'top'
-                }}
-              />
+      {!isBackground && (
+        <>
+          <div className="absolute top-8 right-16 z-10">
+            <div className="relative w-24 h-28">
+              {/* Icona originale */}
+              <div className="w-24 h-28 border-2 border-black bg-transparent overflow-hidden" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
+                <img 
+                  src={getImageUrl(randomHero)} 
+                  alt={randomHero.name}
+                  className="w-full h-full object-cover object-center"
+                  style={{ 
+                    objectPosition: 'center top',
+                    transform: 'scale(3.0) rotate(10deg) translateX(5%) translateY(-10%)',
+                    transformOrigin: 'top'
+                  }}
+                />
+              </div>
+              {/* Icona duplicata sovrapposta tagliata al 50% */}
+              <div className="absolute inset-0 w-24 h-28 bg-transparent overflow-visible" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
+                <img 
+                  src={getImageUrl(randomHero)} 
+                  alt={randomHero.name}
+                  className="w-full h-full object-cover object-center"
+                  style={{ 
+                    objectPosition: 'center top',
+                    transform: 'scale(3.0) rotate(10deg) translateX(5%) translateY(-10%)',
+                    transformOrigin: 'top',
+                    clipPath: 'inset(0 30% 60% 40%)'
+                  }}
+                />
+              </div>
             </div>
-          ))}
-        </div>
-        {otherHeroes.length > 5 && (
-          <div className="mt-2 opacity-60 animate-bounce">
-            <ChevronDown className="w-6 h-6 text-black" />
           </div>
-        )}
-      </div>
+          
+          <div className={`flex flex-col items-start justify-center min-h-screen px-4 relative z-10 transition-opacity duration-300 ease-in-out ${isTransitioning ? 'opacity-0' : ''}`}>
+            <div className="w-full max-w-[90%] pl-4 md:pl-8 lg:pl-12 transform translate-y-[150%]">
+              <h1 className="text-5xl md:text-6xl font-bold text-black mb-8 transform -skew-x-12 pb-1 border-b border-black w-full">
+                {randomHero.name}
+              </h1>
+              <p className="text-black mt-4 mb-[-10px] text-lg leading-relaxed w-full transform -skew-x-12">
+                {displayText}
+              </p>
+            </div>
+          </div>
+            {/* Icone altri personaggi sotto l'icona principale */}
+            <div className="absolute right-16 top-40 z-10 flex flex-col items-center gap-3">
+              <div 
+                className="flex flex-col items-center gap-3 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden"
+                style={{ 
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                }}
+              >
+                {otherHeroes.map((hero) => (
+                  <div 
+                    key={hero.id} 
+                    className="w-24 h-28 shrink-0 border-2 border-black bg-transparent overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer"
+                    style={{ transform: 'perspective(200px) rotateY(-3deg)' }}
+                    onClick={() => handleHeroChange(hero)}
+                  >
+                    <img 
+                      src={getImageUrl(hero)} 
+                      alt={hero.name}
+                      className="w-full h-full object-cover object-center"
+                      style={{ 
+                        objectPosition: 'center top',
+                        transform: 'scale(3.0) rotate(10deg) translateX(5%) translateY(-10%)',
+                        transformOrigin: 'top'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              {otherHeroes.length > 5 && (
+                <div className="mt-2 opacity-60 animate-bounce">
+                  <ChevronDown className="w-8 h-8 text-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />
+                </div>
+              )}
+            </div>
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-        <Link to={`/hero/${encodeURIComponent(randomHero.name)}`} className="block opacity-100!" style={{ opacity: 1 }}>
-          <Button className="text-xl md:text-2xl ">{LoreStrings.goToDetails}</Button>
-        </Link>
-      </div>
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+              <Button 
+                className="text-xl md:text-2xl"
+                onClick={handleButtonClick}
+              >
+                {LoreStrings.goToDetails}
+              </Button>
+            </div>
+          </>
+        )}
+
     </div>
   )
 }

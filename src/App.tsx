@@ -2,7 +2,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './components/Home'
 import HeroesPage from './pages/HeroesPage'
-import SingleHero from './pages/SingleHero'
+import SingleHeroWithTransition from './components/SingleHeroWithTransition'
 import NotFound from './components/NotFound'
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/heroes" element={<HeroesPage />} />
-        <Route path="/hero/:name" element={<SingleHero />} />
+        <Route path="/hero/:name" element={<SingleHeroWithTransition />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
