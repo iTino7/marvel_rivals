@@ -50,6 +50,13 @@ export const getMaps = async (): Promise<Maps> => {
   }
 }
 
+// Funzione per ottenere i dati del battlepass
+export const getBattlePass = async (season?: string | number): Promise<unknown> => {
+  const params = season ? { season } : {}
+  const response = await apiClient.get<unknown>('/battlepass', { params })
+  return response.data
+}
+
 // Esporta gli schemi per uso esterno se necessario
 export { HeroElementSchema, MapSchema, MapsSchema } from './types'
 export { HeroesArraySchema }

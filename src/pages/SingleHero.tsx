@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHeroes } from '@/hooks/useHeroes'
 import MarvelRivalsTitle from '@/components/MarvelRivalsTitle'
@@ -10,7 +10,8 @@ import type { HeroElement } from '@/lib/types'
 function SingleHero() {
   const { name } = useParams<{ name: string }>()
   const { data: heroes, isLoading } = useHeroes()
-  const [selectedCostumeIcon, setSelectedCostumeIcon] = useState<string | null>(null)
+  // Mappa che salva il costume selezionato per ogni personaggio (per ID)
+  const [selectedCostumes, setSelectedCostumes] = useState<Record<string, string | null>>({})
 
   if (isLoading) {
     return (
@@ -22,12 +23,10 @@ function SingleHero() {
 
   const decodedName = name ? decodeURIComponent(name) : ''
   
-  // Reset del costume selezionato quando cambia l'eroe
-  useEffect(() => {
-    setSelectedCostumeIcon(null)
-  }, [decodedName])
-  
   const hero = heroes?.find(h => h.name === decodedName)
+  
+  // Ottieni il costume selezionato per questo personaggio, o null se non c'è
+  const selectedCostumeIcon = hero ? (selectedCostumes[hero.id] ?? null) : null
 
   if (!hero) {
     return (
@@ -38,7 +37,9 @@ function SingleHero() {
   }
 
   const getImageUrl = (hero: HeroElement) => {
-    const costumeIcon = hero.costumes.find((costume) => costume.icon !== null)?.icon
+    // Controlla se c'è un costume selezionato per questo eroe
+    const selectedCostumeForHero = selectedCostumes[hero.id]
+    const costumeIcon = selectedCostumeForHero || hero.costumes.find((costume) => costume.icon !== null)?.icon
     const iconToUse = costumeIcon || hero.icon || hero.transformations[0]?.icon || hero.imageUrl
     if (!iconToUse) return ''
     if (iconToUse.startsWith('http://') || iconToUse.startsWith('https://')) {
@@ -65,8 +66,6 @@ function SingleHero() {
     }
     return `https://marvelrivalsapi.com/rivals/${icon}`
   }
-
-  const imageUrl = getImageUrl(hero)
   
   // Filtra i costumi che hanno un'icona
   const costumesWithIcons = hero.costumes.filter(costume => costume.icon !== null)
@@ -79,8 +78,11 @@ function SingleHero() {
   }
   
   const handleCostumeClick = (costumeIcon: string | null) => {
-    if (costumeIcon) {
-      setSelectedCostumeIcon(costumeIcon)
+    if (costumeIcon && hero) {
+      setSelectedCostumes(prev => ({
+        ...prev,
+        [hero.id]: costumeIcon
+      }))
     }
   }
   
@@ -91,7 +93,7 @@ function SingleHero() {
 
   return (
     <>
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{ zIndex: 20 }}>
       {/* Base con gradiente sottile - Colori neutri */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 z-0" />
       

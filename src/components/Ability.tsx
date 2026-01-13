@@ -23,7 +23,7 @@ function Ability({ hero }: AbilityProps) {
     Weapon: '#8B5CF6', // Purple
   }
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="relative min-h-screen">
       {/* Base con gradiente sottile - Colori neutri */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 z-0" />
       
@@ -68,7 +68,7 @@ function Ability({ hero }: AbilityProps) {
       />
       
       {/* Contenuto */}
-      <div className="relative z-10 min-h-screen py-20 px-4 md:px-6 lg:px-8">
+      <div className="relative z-10 min-h-screen py-20 px-4 md:px-6 lg:px-8 pb-32 md:pb-40">
         {/* Titolo */}
         <div className="flex items-center justify-center gap-4 md:gap-6 mb-12">
           <h2 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold transform -skew-x-12">

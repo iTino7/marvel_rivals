@@ -36,6 +36,7 @@ export const HeroesListStrings = {
 // ============================================
 export const AbilityStrings = {
   abilities: 'Abilità' as const,
+  viewBattlePass: 'Visualizza il Pass battaglia' as const,
 } as const
 
 // ============================================
@@ -72,4 +73,12 @@ export const HomeStrings = {
   marvel: 'Marvel' as const,
   seeAllHeroes: 'Vedi tutti gli eroi' as const,
   circularText: 'MARVEL*RIVALS*HEROES*' as const,
+} as const
+
+// ============================================
+// Pass Component
+// ============================================
+export const PassStrings = {
+  title: 'Pass Battaglia' as const,
+  subtitle: 'Cosa ti sei perso senza il pass' as const,
 } as const
