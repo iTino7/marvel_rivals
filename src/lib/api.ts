@@ -57,6 +57,13 @@ export const getBattlePass = async (season?: string | number): Promise<unknown> 
   return response.data
 }
 
+// Funzione per ottenere le statistiche di un eroe
+export const getHeroStats = async (query: string): Promise<unknown> => {
+  const encodedQuery = encodeURIComponent(query)
+  const response = await apiClient.get<unknown>(`/heroes/hero/${encodedQuery}/stats`)
+  return response.data
+}
+
 // Esporta gli schemi per uso esterno se necessario
 export { HeroElementSchema, MapSchema, MapsSchema } from './types'
 export { HeroesArraySchema }

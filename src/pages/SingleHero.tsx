@@ -5,6 +5,7 @@ import { useHeroes } from '@/hooks/useHeroes'
 import MarvelRivalsTitle from '@/components/MarvelRivalsTitle'
 import HeroCarousel from '@/components/HeroCarousel'
 import Ability from '@/components/Ability'
+import Stats from '@/components/Stats'
 import { SingleHeroStrings } from '@/lib/strings'
 import type { HeroElement } from '@/lib/types'
 
@@ -13,6 +14,7 @@ function SingleHero() {
   const { data: heroes, isLoading } = useHeroes()
   // Mappa che salva il costume selezionato per ogni personaggio (per ID)
   const [selectedCostumes, setSelectedCostumes] = useState<Record<string, string | null>>({})
+  const [showStats, setShowStats] = useState(false)
 
   if (isLoading) {
     return (
@@ -243,7 +245,15 @@ function SingleHero() {
       `}</style>
     </div>
     {/* Componente Ability */}
-    <Ability hero={hero} />
+    <Ability
+      hero={hero}
+      onStatsClick={() => setShowStats(true)}
+    />
+    {showStats && (
+      <section id="hero-stats">
+        <Stats hero={hero} />
+      </section>
+    )}
     </>
   )
 }

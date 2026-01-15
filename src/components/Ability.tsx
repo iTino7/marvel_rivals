@@ -1,11 +1,16 @@
 import { AbilityStrings } from '@/lib/strings'
+import Button from './Button'
 import type { HeroElement, Type } from '@/lib/types'
 
 interface AbilityProps {
   hero: HeroElement
+  onStatsClick?: () => void
 }
 
-function Ability({ hero }: AbilityProps) {
+function Ability({ hero, onStatsClick }: AbilityProps) {
+  const handleStatsClick = () => {
+    onStatsClick?.()
+  }
   const getAbilityIconUrl = (icon: string) => {
     if (!icon) return ''
     if (icon.startsWith('http://') || icon.startsWith('https://')) {
@@ -162,6 +167,11 @@ function Ability({ hero }: AbilityProps) {
             })}
           </div>
         </div>
+      </div>
+      <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center">
+        <Button className="text-xl md:text-2xl" onClick={handleStatsClick}>
+          Vai alle statistiche dell'eroe
+        </Button>
       </div>
     </div>
   )
