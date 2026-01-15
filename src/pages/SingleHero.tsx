@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { useHeroes } from '@/hooks/useHeroes'
@@ -15,6 +15,13 @@ function SingleHero() {
   // Mappa che salva il costume selezionato per ogni personaggio (per ID)
   const [selectedCostumes, setSelectedCostumes] = useState<Record<string, string | null>>({})
   const [showStats, setShowStats] = useState(false)
+  const statsRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (showStats && statsRef.current) {
+      statsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [showStats])
 
   if (isLoading) {
     return (
@@ -250,7 +257,7 @@ function SingleHero() {
       onStatsClick={() => setShowStats(true)}
     />
     {showStats && (
-      <section id="hero-stats">
+      <section id="hero-stats" ref={statsRef}>
         <Stats hero={hero} />
       </section>
     )}

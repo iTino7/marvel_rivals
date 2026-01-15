@@ -64,6 +64,13 @@ export const getHeroStats = async (query: string): Promise<unknown> => {
   return response.data
 }
 
+// Funzione per ottenere le statistiche di un giocatore
+export const getPlayerStats = async (query: string): Promise<unknown> => {
+  const encodedQuery = encodeURIComponent(query)
+  const response = await apiClient.get<unknown>(`/player/${encodedQuery}`)
+  return response.data
+}
+
 // Esporta gli schemi per uso esterno se necessario
 export { HeroElementSchema, MapSchema, MapsSchema } from './types'
 export { HeroesArraySchema }

@@ -30,6 +30,12 @@ function Home() {
           <div className="flex items-center">
             <MarvelRivalsTitle />
           </div>
+          <Link
+            to="/player-stats"
+            className="text-2xl md:text-3xl font-bold text-[#fbdb2b] opacity-80 hover:opacity-100 transition-opacity transform -skew-x-12"
+          >
+            Player Stats
+          </Link>
         </div>
       </nav>
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 relative overflow-hidden z-10">
