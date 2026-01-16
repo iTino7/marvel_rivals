@@ -71,6 +71,13 @@ export const getPlayerStats = async (query: string): Promise<unknown> => {
   return response.data
 }
 
+// Funzione per ottenere la match history di un giocatore (v2)
+export const getPlayerMatchHistory = async (query: string): Promise<unknown> => {
+  const encodedQuery = encodeURIComponent(query)
+  const response = await apiClient.get<unknown>(`https://marvelrivalsapi.com/api/v2/player/${encodedQuery}/match-history`)
+  return response.data
+}
+
 // Funzione per ottenere i dettagli di una mappa tramite ID (v2)
 export const getMapById = async (mapId: number): Promise<unknown> => {
   const encodedId = encodeURIComponent(String(mapId))

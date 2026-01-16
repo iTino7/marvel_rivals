@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
-import { useMapNames } from '@/hooks/useMapNames'
 import { usePlayerStats } from '@/hooks/usePlayerStats'
+import MatchHistory from '@/components/MatchHistory'
 import type { Stats } from '@/lib/playerStatsTypes'
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
@@ -9,11 +9,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> => {
 
 const isPrimitive = (value: unknown): value is string | number | boolean => {
   return ['string', 'number', 'boolean'].includes(typeof value)
-}
-
-const isMatchHistoryKey = (key: string): boolean => {
-  const normalized = key.toLowerCase().replace(/_/g, '')
-  return normalized === 'matchhistory'
 }
 
 const getPlayerSummary = (
@@ -73,78 +68,6 @@ const getPlayerRankSrc = (rankPath?: string): string | null => {
   return `https://marvelrivalsapi.com/rivals${rankPath}`
 }
 
-const getHeroIconSrc = (iconPath?: string): string | null => {
-  if (!iconPath) return null
-  if (iconPath.startsWith('http://') || iconPath.startsWith('https://')) {
-    return iconPath
-  }
-  return `https://marvelrivalsapi.com/rivals${iconPath}`
-}
-
-const getPlayerMatchInfo = (
-  item: Record<string, unknown>,
-  playerUid?: number,
-  mapName?: string
-) => {
-  if (!isRecord(item.player_performance)) {
-    return null
-  }
-  const performance = item.player_performance as Record<string, unknown>
-  const heroIcon = typeof performance.hero_type === 'string' ? performance.hero_type : undefined
-  const heroName = typeof performance.hero_name === 'string' ? performance.hero_name : undefined
-  const matchTimestamp = typeof item.match_time_stamp === 'number' ? item.match_time_stamp : undefined
-  const mapThumbnail = typeof item.map_thumbnail === 'string' ? item.map_thumbnail : undefined
-  const isWin = isRecord(performance.is_win)
-    ? Boolean((performance.is_win as Record<string, unknown>).is_win)
-    : undefined
-  const matchType = typeof performance.score_change === 'number' ||
-    typeof performance.new_score === 'number' ||
-    typeof performance.new_level === 'number'
-    ? 'Competitive'
-    : 'Quick Match'
-  const isMvp = typeof item.mvp_uid === 'number' && playerUid !== undefined
-    ? item.mvp_uid === playerUid
-    : false
-  const isSvp = typeof item.svp_uid === 'number' && playerUid !== undefined
-    ? item.svp_uid === playerUid
-    : false
-  return {
-    heroIcon,
-    heroName,
-    matchTimestamp,
-    isWin,
-    isMvp,
-    isSvp,
-    matchType,
-    mapThumbnail,
-    mapName
-  }
-}
-
-const getMapThumbnailSrc = (thumbnailPath?: string): string | null => {
-  if (!thumbnailPath) return null
-  if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
-    return thumbnailPath
-  }
-  return `https://marvelrivalsapi.com/rivals${thumbnailPath}`
-}
-
-const formatMatchTime = (timestamp?: number): string | null => {
-  if (!timestamp) return null
-  const ms = timestamp > 1e12 ? timestamp : timestamp * 1000
-  const matchDate = new Date(ms)
-  if (Number.isNaN(matchDate.getTime())) return null
-  const diffMs = Date.now() - matchDate.getTime()
-  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  if (days >= 14) return '2 weeks ago'
-  if (days >= 7) return '1 week ago'
-  return matchDate.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
-
 const normalizePayload = (payload: unknown): Stats | null => {
   if (isRecord(payload)) return payload as Stats
   if (Array.isArray(payload) && payload.length > 0 && isRecord(payload[0])) {
@@ -160,13 +83,6 @@ interface PlayerStatsProps {
 function PlayerStats({ query }: PlayerStatsProps) {
   const { data, isLoading, error } = usePlayerStats(query)
   const normalizedData = useMemo(() => normalizePayload(data), [data])
-  const mapIds = useMemo(() => {
-    if (!normalizedData?.match_history) return []
-    return normalizedData.match_history
-      .map((match) => (typeof match.map_id === 'number' ? match.map_id : null))
-      .filter((id): id is number => id !== null)
-  }, [normalizedData])
-  const { data: mapNames } = useMapNames(mapIds)
   const playerSummary = useMemo(() => getPlayerSummary(normalizedData), [normalizedData])
   const hasData = Boolean(normalizedData)
 
@@ -234,118 +150,7 @@ function PlayerStats({ query }: PlayerStatsProps) {
                 </div>
               </div>
             )}
-            {Object.entries(normalizedData)
-              .filter(([, value]) => Array.isArray(value))
-              .filter(([key]) => isMatchHistoryKey(key))
-              .map(([key, value]) => {
-                const items = (value as unknown[]).filter(isRecord)
-                if (items.length === 0) {
-                  return <p key={key} className="text-white">Nessuna partita disponibile.</p>
-                }
-                return (
-                  <div key={key} className="max-w-3xl mx-auto">
-                    <h3 className="text-xl text-yellow-300 font-semibold mb-4">
-                      {key.replace(/_/g, ' ')}
-                    </h3>
-                    <div className="space-y-4">
-                      {items.map((item, index) => {
-                        const mapId = typeof item.map_id === 'number' ? item.map_id : undefined
-                        const mapName = mapId !== undefined ? mapNames?.get(mapId) : undefined
-                        if (mapName) {
-                          console.log(mapName)
-                        } else if (playerSummary?.uid !== undefined) {
-                          console.log(playerSummary.uid)
-                        }
-                        const matchInfo = getPlayerMatchInfo(item, playerSummary?.uid, mapName)
-                        if (!matchInfo) return null
-                        const title = `Match ${index + 1}`
-                        return (
-                          <div key={`${key}-${index}`} className="relative border-2 border-yellow-400/20 rounded-md p-4">
-                            <h4 className="text-yellow-300 text-sm uppercase tracking-wide mb-3">
-                              {title}
-                            </h4>
-                            <div className="flex items-center justify-between gap-6">
-                              <div className="flex items-start gap-4">
-                              {getHeroIconSrc(matchInfo.heroIcon) && (
-                                <img
-                                  src={getHeroIconSrc(matchInfo.heroIcon) as string}
-                                  alt="Hero icon"
-                                  className="w-24 h-24 rounded-md object-cover"
-                                />
-                              )}
-                              {(matchInfo.heroName || formatMatchTime(matchInfo.matchTimestamp) || matchInfo.isMvp || matchInfo.isSvp) && (
-                                <div>
-                                  {matchInfo.heroName && (
-                                    <p className="text-white text-base font-semibold capitalize">
-                                      {matchInfo.heroName}
-                                    </p>
-                                  )}
-                                  {(matchInfo.isMvp || matchInfo.isSvp) && (
-                                    <p
-                                      className={`text-xs font-semibold mt-1 ${
-                                        matchInfo.isMvp ? 'text-yellow-300' : 'text-blue-300'
-                                      }`}
-                                    >
-                                      {matchInfo.isMvp ? 'MVP' : 'SVP'}
-                                    </p>
-                                  )}
-                                  {formatMatchTime(matchInfo.matchTimestamp) && (
-                                    <>
-                                      <p className="text-gray-300 text-xs mt-1">
-                                        {formatMatchTime(matchInfo.matchTimestamp)}
-                                      </p>
-                                      <div className="border-b border-white/10 mt-2" />
-                                    </>
-                                  )}
-                                  {matchInfo.isWin !== undefined && (
-                                    <p className={`text-xs font-semibold mt-2 ${matchInfo.isWin ? 'text-green-300' : 'text-red-300'}`}>
-                                      {matchInfo.isWin ? 'WIN' : 'LOSS'}
-                                    </p>
-                                  )}
-                                </div>
-                              )}
-                              </div>
-                              {getMapThumbnailSrc(matchInfo.mapThumbnail) && (
-                                <div className="w-40 flex flex-col items-end gap-2">
-                                  {matchInfo.mapName ? (
-                                    <p className="text-xs font-semibold text-white/90 text-right">
-                                      {matchInfo.mapName}
-                                    </p>
-                                  ) : mapId !== undefined ? (
-                                    <p className="text-xs font-semibold text-white/70 text-right">
-                                      {mapId}
-                                    </p>
-                                  ) : null}
-                                  <img
-                                    src={getMapThumbnailSrc(matchInfo.mapThumbnail) as string}
-                                    alt="Map thumbnail"
-                                    className="w-48 h-28 rounded-md object-contain bg-black/30"
-                                    data-fallback={matchInfo.mapThumbnail ? `https://marvelrivalsapi.com${matchInfo.mapThumbnail}` : undefined}
-                                    onError={(event) => {
-                                      const target = event.currentTarget
-                                      const fallback = target.dataset.fallback
-                                      if (fallback && target.src !== fallback) {
-                                        target.src = fallback
-                                      }
-                                    }}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            {matchInfo.matchType && (
-                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <p className="text-sm font-semibold text-white/80">
-                                  {matchInfo.matchType}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )
-              })}
+            <MatchHistory query={query} />
           </div>
         )}
       </div>

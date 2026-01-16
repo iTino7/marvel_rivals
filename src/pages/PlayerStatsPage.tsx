@@ -19,7 +19,7 @@ function PlayerStatsPage() {
   return (
     <div className="relative min-h-screen bg-black">
       <div className="relative z-20">
-        <nav className="bg-black border-b border-white/10">
+        <nav className="fixed top-0 inset-x-0 bg-black border-b border-white/10 z-30">
           <div className="relative flex items-center h-16 px-4 sm:px-6 lg:px-8">
             <MarvelRivalsTitle />
             {hasSearched && (
@@ -42,7 +42,7 @@ function PlayerStatsPage() {
           </div>
         </nav>
         <div className="fixed inset-x-0 top-16 bottom-0 bg-neutral-900 pointer-events-none z-0" />
-        <main className="relative z-10 min-h-[calc(100vh-4rem)]">
+        <main className="relative z-10 min-h-[calc(100vh-4rem)] pt-16">
           <div>
             {!hasSearched && (
               <div className="w-full py-10 px-6">
