@@ -71,6 +71,13 @@ export const getPlayerStats = async (query: string): Promise<unknown> => {
   return response.data
 }
 
+// Funzione per ottenere i dettagli di una mappa tramite ID (v2)
+export const getMapById = async (mapId: number): Promise<unknown> => {
+  const encodedId = encodeURIComponent(String(mapId))
+  const response = await apiClient.get<unknown>(`https://marvelrivalsapi.com/api/v2/map/${encodedId}`)
+  return response.data
+}
+
 // Esporta gli schemi per uso esterno se necessario
 export { HeroElementSchema, MapSchema, MapsSchema } from './types'
 export { HeroesArraySchema }

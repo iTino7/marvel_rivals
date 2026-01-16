@@ -63,3 +63,4 @@ export const getMapVideoUrl = (map: Map): string | null => {
 export const getSubMapThumbnailUrl = (map: Map): string | null => {
   return map.sub_map_thumbnail
 }
+
