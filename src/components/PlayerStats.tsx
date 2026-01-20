@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { usePlayerStats } from '@/hooks/usePlayerStats'
 import MatchHistory from '@/components/MatchHistory'
 import type { Stats } from '@/lib/playerStatsTypes'
@@ -82,16 +82,10 @@ interface PlayerStatsProps {
 
 function PlayerStats({ query }: PlayerStatsProps) {
   const { data, isLoading, error } = usePlayerStats(query)
+  const [season, setSeason] = useState('5.5')
   const normalizedData = useMemo(() => normalizePayload(data), [data])
   const playerSummary = useMemo(() => getPlayerSummary(normalizedData), [normalizedData])
   const hasData = Boolean(normalizedData)
-
-  useEffect(() => {
-    const iconSrc = getPlayerIconSrc(playerSummary?.iconPath || undefined)
-    if (iconSrc) {
-      console.log(iconSrc)
-    }
-  }, [playerSummary?.iconPath])
 
   return (
     <div className="relative min-h-full w-full overflow-hidden">
@@ -150,7 +144,32 @@ function PlayerStats({ query }: PlayerStatsProps) {
                 </div>
               </div>
             )}
-            <MatchHistory query={query} />
+            <div className="max-w-3xl mx-auto flex items-center justify-between gap-4 mb-4">
+              <h3 className="text-xl text-yellow-300 font-semibold">
+                Match history
+              </h3>
+              <label className="flex items-center gap-2 text-sm text-white/80">
+                Season
+                <select
+                  value={season}
+                  onChange={(event) => setSeason(event.target.value)}
+                  className="bg-black/40 text-white border border-yellow-400/20 rounded-md px-3 py-1 text-sm"
+                >
+                  <option value="6">6</option>
+                  <option value="5.5">5.5</option>
+                  <option value="5">5</option>
+                  <option value="4.5">4.5</option>
+                  <option value="4">4</option>
+                  <option value="3.5">3.5</option>
+                  <option value="3">3</option>
+                  <option value="2.5">2.5</option>
+                  <option value="2">2</option>
+                  <option value="1.5">1.5</option>
+                  <option value="1">1</option>
+                </select>
+              </label>
+            </div>
+            <MatchHistory query={query} season={season} showHeader={false} />
           </div>
         )}
       </div>

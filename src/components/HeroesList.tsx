@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useHeroes } from '@/hooks/useHeroes'
+import { useHeroByName } from '@/hooks/useHeroByName'
 import { HeroesListStrings } from '@/lib/strings'
 import type { Role, HeroElement } from '@/lib/types'
 
@@ -62,6 +63,7 @@ function HeroCard({ hero, getImageUrl }: HeroCardProps) {
 
 function HeroesList({ searchQuery }: HeroesListProps) {
   const { data: heroes, isLoading, error } = useHeroes()
+  const { data: heroByName } = useHeroByName(searchQuery)
 
   // Filtra gli eroi in base alla query di ricerca
   const filteredHeroes = useMemo(() => {
@@ -69,11 +71,14 @@ function HeroesList({ searchQuery }: HeroesListProps) {
     if (!searchQuery.trim()) return heroes
     
     const query = searchQuery.toLowerCase().trim()
-    return heroes.filter((hero) => 
+    const localMatches = heroes.filter((hero) => 
       hero.name.toLowerCase().includes(query) ||
       hero.real_name.toLowerCase().includes(query)
     )
-  }, [heroes, searchQuery])
+    if (localMatches.length > 0) return localMatches
+    if (heroByName) return [heroByName]
+    return []
+  }, [heroes, searchQuery, heroByName])
 
   // Raggruppa gli eroi per ruolo
   const heroesByRole = useMemo<Record<Role, HeroElement[]>>(() => {

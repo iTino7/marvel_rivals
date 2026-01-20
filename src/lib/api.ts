@@ -33,6 +33,29 @@ export const getHeroes = async (): Promise<HeroElement[]> => {
   }
 }
 
+// Funzione per ottenere un eroe per nome
+export const getHeroByName = async (query: string): Promise<HeroElement | null> => {
+  const encodedQuery = encodeURIComponent(query)
+  const response = await apiClient.get<unknown>(`/heroes/hero/${encodedQuery}`)
+  const payload = response.data
+
+  try {
+    if (Array.isArray(payload) && payload.length > 0) {
+      return HeroElementSchema.parse(payload[0])
+    }
+    if (payload) {
+      return HeroElementSchema.parse(payload)
+    }
+    return null
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error('Errore di validazione Zod:', error.issues)
+      return null
+    }
+    throw error
+  }
+}
+
 // Schema per validare la risposta delle mappe
 export const getMaps = async (): Promise<Maps> => {
   const response = await apiClient.get<unknown>('/maps')
@@ -50,13 +73,6 @@ export const getMaps = async (): Promise<Maps> => {
   }
 }
 
-// Funzione per ottenere i dati del battlepass
-export const getBattlePass = async (season?: string | number): Promise<unknown> => {
-  const params = season ? { season } : {}
-  const response = await apiClient.get<unknown>('/battlepass', { params })
-  return response.data
-}
-
 // Funzione per ottenere le statistiche di un eroe
 export const getHeroStats = async (query: string): Promise<unknown> => {
   const encodedQuery = encodeURIComponent(query)
@@ -72,9 +88,15 @@ export const getPlayerStats = async (query: string): Promise<unknown> => {
 }
 
 // Funzione per ottenere la match history di un giocatore (v2)
-export const getPlayerMatchHistory = async (query: string): Promise<unknown> => {
+export const getPlayerMatchHistory = async (
+  query: string,
+  season: string
+): Promise<unknown> => {
   const encodedQuery = encodeURIComponent(query)
-  const response = await apiClient.get<unknown>(`https://marvelrivalsapi.com/api/v2/player/${encodedQuery}/match-history`)
+  const response = await apiClient.get<unknown>(
+    `https://marvelrivalsapi.com/api/v2/player/${encodedQuery}/match-history`,
+    { params: { season } }
+  )
   return response.data
 }
 

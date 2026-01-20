@@ -75,10 +75,3 @@ export const HomeStrings = {
   circularText: 'MARVEL*RIVALS*HEROES*' as const,
 } as const
 
-// ============================================
-// Pass Component
-// ============================================
-export const PassStrings = {
-  title: 'Pass Battaglia' as const,
-  subtitle: 'Cosa ti sei perso senza il pass' as const,
-} as const
