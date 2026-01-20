@@ -11,6 +11,9 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
   const handleStatsClick = () => {
     onStatsClick?.()
   }
+  const sanitizeDescription = (text: string) => {
+    return text.replace(/(\[[^\]]+\]|\{[^}]+\}|<[^>]+>)/g, '').replace(/\s{2,}/g, ' ').trim()
+  }
   const getAbilityIconUrl = (icon: string) => {
     if (!icon) return ''
     if (icon.startsWith('http://') || icon.startsWith('https://')) {
@@ -116,7 +119,7 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
                       )}
                       {ability.description && (
                         <p className="text-white text-sm md:text-base leading-relaxed opacity-100">
-                          {ability.description}
+                          {sanitizeDescription(ability.description)}
                         </p>
                       )}
                     </div>
@@ -157,7 +160,7 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
                       )}
                       {ability.description && (
                         <p className="text-white text-sm md:text-base leading-relaxed opacity-100">
-                          {ability.description}
+                          {sanitizeDescription(ability.description)}
                         </p>
                       )}
                     </div>
