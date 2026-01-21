@@ -36,6 +36,12 @@ const formatMatchTime = (timestamp?: number): string | null => {
   })
 }
 
+const formatKd = (kills?: number, deaths?: number) => {
+  if (kills === undefined || deaths === undefined) return '-'
+  if (deaths === 0) return `${kills.toFixed(1)}`
+  return (kills / deaths).toFixed(2)
+}
+
 const getMatchInfo = (item: MatchHistoryElement) => {
   if (!item || !isRecord(item.match_player)) return null
   const player = item.match_player as Record<string, unknown>
@@ -168,24 +174,35 @@ function MatchHistory({ query, season, showHeader = true }: MatchHistoryProps) {
               </div>
               {(matchInfo.kills !== undefined || matchInfo.deaths !== undefined || matchInfo.assists !== undefined) && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="grid grid-cols-3 gap-6 text-center">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wide text-white/60">Kill</span>
-                      <p className="text-base md:text-lg font-semibold text-white/80">
-                        {matchInfo.kills ?? '-'}
-                      </p>
+                  <div className="w-full px-6 flex items-center">
+                    <div className="flex-1" />
+                    <div className="grid grid-cols-3 gap-6 text-center">
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wide text-white/60">Kill</span>
+                        <p className="text-base md:text-lg font-semibold text-white/80">
+                          {matchInfo.kills ?? '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wide text-white/60">Death</span>
+                        <p className="text-base md:text-lg font-semibold text-white/80">
+                          {matchInfo.deaths ?? '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wide text-white/60">Assist</span>
+                        <p className="text-base md:text-lg font-semibold text-white/80">
+                          {matchInfo.assists ?? '-'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wide text-white/60">Death</span>
-                      <p className="text-base md:text-lg font-semibold text-white/80">
-                        {matchInfo.deaths ?? '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wide text-white/60">Assist</span>
-                      <p className="text-base md:text-lg font-semibold text-white/80">
-                        {matchInfo.assists ?? '-'}
-                      </p>
+                    <div className="flex-1 flex justify-end">
+                      <div className="text-right">
+                        <span className="text-xs uppercase tracking-wide text-white/60">KD</span>
+                        <p className="text-lg md:text-2xl font-semibold text-white/90">
+                          {formatKd(matchInfo.kills, matchInfo.deaths)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

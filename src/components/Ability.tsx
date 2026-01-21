@@ -11,8 +11,18 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
   const handleStatsClick = () => {
     onStatsClick?.()
   }
-  const sanitizeDescription = (text: string) => {
-    return text.replace(/(\[[^\]]+\]|\{[^}]+\}|<[^>]+>)/g, '').replace(/\s{2,}/g, ' ').trim()
+  const renderDescription = (text: string) => {
+    const parts = text.split(/(\[[^\]]+\]|\{[^}]+\}|<[^>]+>)/g)
+    return parts.map((part, index) => {
+      if (/^\[[^\]]+\]$/.test(part) || /^\{[^}]+\}$/.test(part) || /^<[^>]+>$/.test(part)) {
+        return (
+          <strong key={`${part}-${index}`} className="font-bold">
+            {part}
+          </strong>
+        )
+      }
+      return <span key={`${part}-${index}`}>{part}</span>
+    })
   }
   const getAbilityIconUrl = (icon: string) => {
     if (!icon) return ''
@@ -119,7 +129,7 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
                       )}
                       {ability.description && (
                         <p className="text-white text-sm md:text-base leading-relaxed opacity-100">
-                          {sanitizeDescription(ability.description)}
+                          {renderDescription(ability.description)}
                         </p>
                       )}
                     </div>
@@ -160,7 +170,7 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
                       )}
                       {ability.description && (
                         <p className="text-white text-sm md:text-base leading-relaxed opacity-100">
-                          {sanitizeDescription(ability.description)}
+                          {renderDescription(ability.description)}
                         </p>
                       )}
                     </div>
