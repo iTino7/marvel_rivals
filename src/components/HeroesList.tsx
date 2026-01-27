@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useHeroes } from '@/hooks/useHeroes'
 import { useHeroByName } from '@/hooks/useHeroByName'
+import { Input } from '@/components/ui/input'
 import { HeroesListStrings } from '@/lib/strings'
 import type { Role, HeroElement } from '@/lib/types'
 
@@ -62,15 +63,29 @@ function HeroCard({ hero, getImageUrl }: HeroCardProps) {
 }
 
 function HeroesList({ searchQuery }: HeroesListProps) {
+  const [manualQuery, setManualQuery] = useState('')
+  const [submittedQuery, setSubmittedQuery] = useState('')
   const { data: heroes, isLoading, error } = useHeroes()
-  const { data: heroByName } = useHeroByName(searchQuery)
+  const activeQuery = submittedQuery.trim() || searchQuery
+  const { data: heroByName, isFetching: isFetchingHero } = useHeroByName(activeQuery)
+  const showSearchSkeleton = Boolean(activeQuery.trim()) && isFetchingHero
+
+  const isHeroInDefaultList = useMemo(() => {
+    if (!heroes || !heroByName) return true
+    const needle = heroByName.name.toLowerCase().trim()
+    return heroes.some((hero) => {
+      const nameMatch = hero.name.toLowerCase().trim() === needle
+      const realNameMatch = hero.real_name.toLowerCase().trim() === needle
+      return nameMatch || realNameMatch
+    })
+  }, [heroes, heroByName])
 
   // Filtra gli eroi in base alla query di ricerca
   const filteredHeroes = useMemo(() => {
     if (!heroes) return []
-    if (!searchQuery.trim()) return heroes
+    if (!activeQuery.trim()) return heroes
     
-    const query = searchQuery.toLowerCase().trim()
+    const query = activeQuery.toLowerCase().trim()
     const localMatches = heroes.filter((hero) => 
       hero.name.toLowerCase().includes(query) ||
       hero.real_name.toLowerCase().includes(query)
@@ -78,7 +93,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
     if (localMatches.length > 0) return localMatches
     if (heroByName) return [heroByName]
     return []
-  }, [heroes, searchQuery, heroByName])
+  }, [heroes, activeQuery, heroByName])
 
   // Raggruppa gli eroi per ruolo
   const heroesByRole = useMemo<Record<Role, HeroElement[]>>(() => {
@@ -123,11 +138,11 @@ function HeroesList({ searchQuery }: HeroesListProps) {
     )
   }
 
-  if (searchQuery.trim() && filteredHeroes.length === 0) {
+  if (activeQuery.trim() && filteredHeroes.length === 0 && !isFetchingHero) {
     return (
       <div className="flex justify-center items-center py-8">
         <div className="text-lg text-gray-600 dark:text-gray-400">
-          {HeroesListStrings.noHeroesFoundFor(searchQuery)}
+          {HeroesListStrings.noHeroesFoundFor(activeQuery)}
         </div>
       </div>
     )
@@ -151,6 +166,44 @@ function HeroesList({ searchQuery }: HeroesListProps) {
       <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white text-center">
         Eroi Marvel Rivals
       </h2>
+
+      <div className="max-w-md mx-auto mb-6 px-4">
+        <form
+          onSubmit={(event) => {
+            event.preventDefault()
+            setSubmittedQuery(manualQuery.trim())
+          }}
+        >
+          <Input
+            placeholder="Cerca eroe..."
+            value={manualQuery}
+            onChange={(event) => setManualQuery(event.target.value)}
+            className="text-gray-900 dark:text-white placeholder:text-gray-400 font-['Rajdhani'] font-semibold"
+          />
+        </form>
+      </div>
+
+      {activeQuery.trim() && heroByName && !isHeroInDefaultList && (
+        <div className="max-w-2xl mx-auto mb-10 px-4">
+          <div className="rounded-md border border-yellow-400/40 bg-yellow-400/10 px-4 py-3 text-sm text-yellow-200">
+            Questo eroe non è ancora presente nella lista ufficiale: l'API è in aggiornamento e i
+            dati potrebbero essere incompleti.
+          </div>
+        </div>
+      )}
+
+      {showSearchSkeleton && (
+        <div className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 px-4 w-full">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={`hero-skeleton-${index}`}
+                className="h-[450px] w-full rounded-lg border border-gray-200/60 dark:border-white/10 bg-gray-200/40 dark:bg-white/5 animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      )}
       
       {roles.map((role) => {
         const roleHeroes = heroesByRole[role]
