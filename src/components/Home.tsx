@@ -48,7 +48,7 @@ function Home() {
           </p>
           <Link
             to="/heroes"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]"
+            className="inline-flex items-center justify-center rounded-lg border border-white/30 bg-white/15 px-6 py-3 text-white font-semibold backdrop-blur-md transition-all duration-200 shadow-lg shadow-black/20 hover:bg-white/25 hover:border-white/50"
           >
             {HomeStrings.seeAllHeroes}
           </Link>

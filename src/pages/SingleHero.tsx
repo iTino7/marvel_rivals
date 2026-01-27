@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { useHeroes } from '@/hooks/useHeroes'
 import MarvelRivalsTitle from '@/components/MarvelRivalsTitle'
+import Navbar from '@/components/Navbar'
 import HeroCarousel from '@/components/HeroCarousel'
 import Ability from '@/components/Ability'
 import Stats from '@/components/Stats'
@@ -40,8 +41,17 @@ function SingleHero() {
 
   if (!hero) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-white text-xl">{SingleHeroStrings.heroNotFound}</div>
+      <div className="min-h-screen bg-black flex flex-col">
+        <Navbar searchValue="" onSearchChange={() => {}} />
+        <div className="flex-1 flex flex-col items-center justify-center px-4 text-center">
+          <div className="text-white text-xl mb-4">{SingleHeroStrings.heroNotFound}</div>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-gray-200 transition-colors"
+          >
+            Torna alla Home
+          </Link>
+        </div>
       </div>
     )
   }
