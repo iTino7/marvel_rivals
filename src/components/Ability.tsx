@@ -82,7 +82,7 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
       {/* Contenuto */}
       <div className="relative z-10 min-h-screen py-20 px-4 md:px-6 lg:px-8 pb-32 md:pb-40">
         {/* Titolo */}
-        <div className="flex items-center justify-center gap-4 md:gap-6 mb-12">
+        <div className="flex flex-col items-center justify-center gap-2 md:gap-6 mb-12 min-[577px]:flex-row">
           <h2 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold transform -skew-x-12">
             {AbilityStrings.abilities}
           </h2>
@@ -91,7 +91,7 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
           </h2>
         </div>
         
-        <div className="max-w-7xl mx-auto flex flex-row gap-8 md:gap-12">
+        <div className="max-w-7xl mx-auto flex flex-col gap-8 md:gap-12 min-[577px]:flex-row">
           {/* Lista abilità a sinistra */}
           <div className="flex-1 flex flex-col gap-4 md:gap-6">
             {hero.abilities.slice(0, Math.ceil(hero.abilities.length / 2)).map((ability, index) => {
@@ -176,7 +176,7 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
         </div>
       </div>
       <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center">
-        <Button className="text-xl md:text-2xl" onClick={handleStatsClick}>
+        <Button className="text-xl md:text-2xl max-[576px]:text-base max-[576px]:px-4 max-[576px]:py-2 max-[576px]:max-w-[260px] max-[576px]:w-full" onClick={handleStatsClick}>
           Vai alle statistiche dell'eroe
         </Button>
       </div>
