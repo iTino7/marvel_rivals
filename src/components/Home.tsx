@@ -57,7 +57,7 @@ function Home() {
           onClick={() => setArrowClicked(true)}
           animate={!arrowClicked}
         />
-        <div className="absolute bottom-8 right-8 pointer-events-none overflow-visible" style={{ willChange: 'transform' }}>
+        <div className="absolute bottom-8 right-8 pointer-events-none overflow-visible home-circular-text" style={{ willChange: 'transform' }}>
           <CircularText 
             text={HomeStrings.circularText} 
             className="w-[150px] h-[150px] [&_span]:text-[#fbdb2b]"

@@ -197,7 +197,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
 
       {showSearchSkeleton && (
         <div className="mb-12">
-          <div className="grid grid-cols-4 gap-8 px-4 w-full">
+          <div className="grid grid-cols-1 min-[577px]:grid-cols-2 min-[993px]:grid-cols-4 gap-8 px-4 w-full">
             {Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={`hero-skeleton-${index}`}
@@ -217,7 +217,7 @@ function HeroesList({ searchQuery }: HeroesListProps) {
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 px-4">
               {role}
             </h3>
-            <div className="grid grid-cols-4 gap-8 px-4 w-full">
+            <div className="grid grid-cols-1 min-[577px]:grid-cols-2 min-[993px]:grid-cols-4 gap-8 px-4 w-full">
               {roleHeroes.map((hero) => (
                 <HeroCard key={hero.id} hero={hero} getImageUrl={getImageUrl} />
               ))}
