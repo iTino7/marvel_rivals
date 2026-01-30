@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import Button from './Button'
-import Transition from './Transition'
 import { useHeroes } from '@/hooks/useHeroes'
 import { LoreStrings } from '@/lib/strings'
 import type { HeroElement } from '@/lib/types'
@@ -16,6 +15,7 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
   const { data: heroes, isLoading } = useHeroes()
   const [randomHero, setRandomHero] = useState<HeroElement | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [isLoreExpanded, setIsLoreExpanded] = useState(false)
   const navigate = useNavigate()
   const hasSelectedHero = useRef(false)
 
@@ -37,6 +37,7 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
         }
         
         setRandomHero(heroToShow)
+        setIsLoreExpanded(false)
         hasSelectedHero.current = true
       }, 0)
     }
@@ -96,6 +97,7 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
     setIsTransitioning(true)
     setTimeout(() => {
       setRandomHero(hero)
+      setIsLoreExpanded(false)
       setTimeout(() => {
         setIsTransitioning(false)
       }, 50)
@@ -136,15 +138,14 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
           <img 
             src={costumeImageUrl} 
             alt={randomHero.name}
-            className="w-full h-full object-cover"
-            style={{ objectPosition: '0% 10%' }}
+            className="w-full h-full object-cover hero-bg-img"
           />
         </div>
       )}
       
       {!isBackground && (
-        <div className="absolute top-8 left-8 z-10 flex items-center h-28">
-          <h2 className="text-4xl md:text-5xl font-bold text-black transform skew-x-12">
+        <div className="absolute top-2 left-4 z-10 flex items-center h-28 min-[768px]:top-8 min-[768px]:left-8">
+          <h2 className="text-3xl font-bold text-black transform skew-x-12 min-[768px]:text-4xl min-[992px]:text-5xl">
             {randomHero.real_name}
           </h2>
         </div>
@@ -152,10 +153,10 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
       
       {!isBackground && (
         <>
-          <div className="absolute top-8 right-16 z-10">
-            <div className="relative w-24 h-28">
+          <div className="absolute top-8 right-4 z-10 min-[576px]:right-16 min-[768px]:right-16">
+            <div className="relative w-16 h-20 min-[576px]:w-24 min-[576px]:h-28 min-[768px]:w-24 min-[768px]:h-28">
               {/* Icona originale */}
-              <div className="w-24 h-28 border-2 border-black bg-transparent overflow-hidden" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
+              <div className="w-16 h-20 min-[576px]:w-24 min-[576px]:h-28 min-[768px]:w-24 min-[768px]:h-28 border-2 border-black bg-transparent overflow-hidden" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
                 <img 
                   src={getImageUrl(randomHero)} 
                   alt={randomHero.name}
@@ -168,7 +169,7 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
                 />
               </div>
               {/* Icona duplicata sovrapposta tagliata al 50% */}
-              <div className="absolute inset-0 w-24 h-28 bg-transparent overflow-visible" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
+              <div className="absolute inset-0 w-16 h-20 min-[576px]:w-24 min-[576px]:h-28 min-[768px]:w-24 min-[768px]:h-28 bg-transparent overflow-visible" style={{ transform: 'perspective(200px) rotateY(-3deg)' }}>
                 <img 
                   src={getImageUrl(randomHero)} 
                   alt={randomHero.name}
@@ -186,16 +187,16 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
           
           <div className={`flex flex-col items-start justify-center min-h-screen px-4 relative z-10 transition-opacity duration-300 ease-in-out ${isTransitioning ? 'opacity-0' : ''}`}>
             <div className="w-full max-w-[90%] pl-4 md:pl-8 lg:pl-12 transform translate-y-[150%]">
-              <h1 className="text-5xl md:text-6xl font-bold text-black mb-8 transform -skew-x-12 pb-1 border-b border-black w-full">
+              <h1 className="hidden text-5xl md:text-6xl font-bold text-black mb-8 transform -skew-x-12 pb-1 border-b border-black w-full min-[768px]:block">
                 {randomHero.name}
               </h1>
-              <p className="text-black mt-4 mb-[-10px] text-lg leading-relaxed w-full transform -skew-x-12">
+              <p className="hidden min-[768px]:block text-black mt-4 mb-[-10px] text-lg leading-relaxed w-full transform -skew-x-12">
                 {displayText}
               </p>
             </div>
           </div>
             {/* Icone altri personaggi sotto l'icona principale */}
-            <div className="absolute right-16 top-40 z-10 flex flex-col items-center gap-3">
+            <div className="absolute right-4 top-40 z-10 flex flex-col items-center gap-3 min-[576px]:right-16 min-[768px]:right-16">
               <div 
                 className="flex flex-col items-center gap-3 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden"
                 style={{ 
@@ -206,7 +207,7 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
                 {otherHeroes.map((hero) => (
                   <div 
                     key={hero.id} 
-                    className="w-24 h-28 shrink-0 border-2 border-black bg-transparent overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer"
+                    className="w-16 h-20 min-[576px]:w-24 min-[576px]:h-28 min-[768px]:w-24 min-[768px]:h-28 shrink-0 border-2 border-black bg-transparent overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer"
                     style={{ transform: 'perspective(200px) rotateY(-3deg)' }}
                     onClick={() => handleHeroChange(hero)}
                   >
@@ -230,9 +231,27 @@ function Lore({ heroName, isBackground = false }: LoreProps = {}) {
               )}
             </div>
 
+            {isLoreExpanded && (
+              <div className="absolute inset-0 bg-black/60 z-10 min-[768px]:hidden" />
+            )}
+            <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-20 w-[90%] max-w-md min-[768px]:hidden">
+              <div className="rounded-md border border-white/30 bg-white/20 px-4 py-3 shadow-lg backdrop-blur-md">
+                <p className={`text-neutral-100/90 text-sm leading-relaxed ${isLoreExpanded ? '' : 'lore-compact-text'}`}>
+                  {displayText}
+                </p>
+                <button
+                  type="button"
+                  className="mt-2 text-sm font-semibold text-black underline underline-offset-4"
+                  onClick={() => setIsLoreExpanded(prev => !prev)}
+                >
+                  {isLoreExpanded ? 'Mostra meno' : 'Leggi di più'}
+                </button>
+              </div>
+            </div>
+
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
               <Button 
-                className="text-xl md:text-2xl"
+                className="text-base min-[768px]:text-2xl"
                 onClick={handleButtonClick}
               >
                 {LoreStrings.goToDetails}

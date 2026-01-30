@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Background hero image positioning (Bootstrap breakpoints) */
+.hero-bg-img {
+  object-position: center;
+}
+
+@media (min-width: 768px) {
+  .hero-bg-img {
+    object-position: 0% 10%;
+  }
+}
+
+/* Compact lore card clamp for xs/small */
+.lore-compact-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Personalizzazione scrollbar globale per uniformarlo al design */
 * {
   scrollbar-width: thin;
