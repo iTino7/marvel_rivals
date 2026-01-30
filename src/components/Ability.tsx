@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { AbilityStrings } from '@/lib/strings'
 import Button from './Button'
 import type { HeroElement, Type } from '@/lib/types'
@@ -8,6 +9,15 @@ interface AbilityProps {
 }
 
 function Ability({ hero, onStatsClick }: AbilityProps) {
+  const uniqueAbilities = useMemo(() => {
+    const seen = new Set<string>()
+    return hero.abilities.filter((ability) => {
+      const key = `${ability.id}-${ability.name ?? ''}-${ability.description ?? ''}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [hero.abilities])
   const handleStatsClick = () => {
     onStatsClick?.()
   }
@@ -94,11 +104,11 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
         <div className="max-w-7xl mx-auto flex flex-col gap-8 md:gap-12 min-[577px]:flex-row">
           {/* Lista abilità a sinistra */}
           <div className="flex-1 flex flex-col gap-4 md:gap-6">
-            {hero.abilities.slice(0, Math.ceil(hero.abilities.length / 2)).map((ability, index) => {
+            {uniqueAbilities.slice(0, Math.ceil(uniqueAbilities.length / 2)).map((ability, index) => {
               const typeColor = typeColors[ability.type]
               return (
                 <div
-                  key={ability.id}
+                  key={`${hero.id}-${ability.id}-${index}`}
                   className="relative group"
                 >
                   {/* Card semplice con solo icona e testo */}
@@ -135,11 +145,11 @@ function Ability({ hero, onStatsClick }: AbilityProps) {
           
           {/* Lista abilità a destra */}
           <div className="flex-1 flex flex-col gap-4 md:gap-6">
-            {hero.abilities.slice(Math.ceil(hero.abilities.length / 2)).map((ability, index) => {
+            {uniqueAbilities.slice(Math.ceil(uniqueAbilities.length / 2)).map((ability, index) => {
               const typeColor = typeColors[ability.type]
               return (
                 <div
-                  key={ability.id}
+                  key={`${hero.id}-${ability.id}-${index}`}
                   className="relative group"
                 >
                   {/* Card semplice con solo icona e testo */}
